@@ -454,7 +454,7 @@
     if (Math.abs(rAcum) >= 40) { proximo(rAcum > 0 ? 1 : -1); rAcum = 0; rTrava = agora + 900; rPausa = true; }
   }, { passive: false });
   addEventListener('click', (e) => {
-    if (e.target.closest('#tela')) return;
+    if (e.target.closest('#tela, .video-moldura')) return;   // clique no vídeo usa os controles dele, não troca de cena
     proximo(e.clientX < innerWidth * .25 ? -1 : 1);
   });
   function telaCheia() {
