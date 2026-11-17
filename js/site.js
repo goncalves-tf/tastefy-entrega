@@ -21,7 +21,7 @@
     { c: 'fluxo', b: 0, cap: 'A solução' },
     { c: 'rotas', b: 0, cap: 'A solução · rotas reais' },
     { c: 'numeros', b: 0, cap: 'O teste', cortina: true },
-    { c: 'antes', b: 0, cap: 'O indicador' },
+    { c: 'antes', b: 0, cap: 'Antes e depois' },
     { c: 'custo', b: 0, cap: 'Custo e setor' },
     { c: 'mais', b: 0, cap: '', cortina: true },
     { c: 'mais', b: 1, cap: '' },
@@ -214,13 +214,16 @@
       return tl;
     },
     antes() {
-      const tl = gsap.timeline(), s = $('.ad-depois [data-ate]');
-      tl.add(aparece(['[data-cena="antes"] .kicker', '.ad-lado:not(.depois)']))
-        .fromTo('.ad-rota path', { drawSVG: '0%' }, { drawSVG: '100%', duration: 1, ease: ENTRA }, .5)
-        .fromTo('.ad-rota circle', { scale: 0, transformOrigin: 'center' }, { scale: 1, duration: .4, ease: 'back.out(2)' }, 1.4)
-        .add(aparece('.ad-lado.depois'), 1.4)
-        .add(conta(s, 88, 1.3), 1.45)
-        .add(aparece(['.ad-tit', '.ad-linhas div'], { stagger: .14 }), 2.1);
+      const tl = gsap.timeline();
+      tl.add(aparece('[data-cena="antes"] .kicker'))
+        .fromTo('.ah-antes', { autoAlpha: 0, x: -40, rotate: -6 }, { autoAlpha: 1, x: 0, rotate: -3, duration: .9, ease: SAI }, 0)
+        .fromTo('.ah-risco path', { drawSVG: '0%' }, { drawSVG: '100%', duration: .5, ease: 'power2.out', stagger: .25 }, .8)
+        .to('.ah-antes img', { filter: 'grayscale(1) brightness(.55)', duration: .6 }, 1.1)
+        .fromTo('.ah-seta path', { drawSVG: '0%' }, { drawSVG: '100%', duration: .8, ease: 'power2.inOut' }, 1.3)
+        .fromTo('.ah-seta circle', { scale: 0, transformOrigin: 'center' }, { scale: 1, duration: .35, ease: 'back.out(2)' }, 2)
+        .fromTo('.ah-depois', { autoAlpha: 0, x: 50 }, { autoAlpha: 1, x: 0, duration: .9, ease: SAI }, 1.9)
+        .fromTo('.ah-tela', { clipPath: 'inset(0 100% 0 0 round 16px)' }, { clipPath: 'inset(0 0% 0 0 round 16px)', duration: 1.1, ease: 'power3.inOut' }, 2)
+        .add(aparece('.ah-frase'), 2.8);
       return tl;
     },
     custo() {
@@ -332,6 +335,7 @@
   const LADO = [0.08, 0.03, 0.94, 0.03, 0.95, 0.95, 0.95, 0.95, 0.035, 0, 0, 0.975, 0.04, 0.95, 0.05, 0.05, 0.5];
   const ALVO = { 1: 'risco', 9: 'fluxo', 10: 'mapa', 16: 'fecho' };
   const trilho = { cv: $('#rota'), ctx: null, W: 0, H: 0, pts: [], anc: [] };
+  const logoMoto = new Image(); logoMoto.src = 'assets/img/logo-entrega.webp'; logoMoto.onload = () => trilhoDesenha();
   function ancoras() {
     const W = innerWidth, H = innerHeight;
     return LADO.map((x, i) => {
@@ -393,9 +397,11 @@
     const i = Math.round(rol), perto = Math.abs(rol - i) < .04 && (ALVO[i] || i === 0 || i === LADO.length - 1);
     if (!perto) {
       const x = sx(head), y = sy(head);
-      c.fillStyle = 'rgba(255,204,0,.22)'; c.beginPath(); c.arc(x, y, 18, 0, Math.PI * 2); c.fill();
-      c.fillStyle = '#FFCC00'; c.beginPath(); c.arc(x, y, 8, 0, Math.PI * 2); c.fill();
-      c.fillStyle = '#111'; c.beginPath(); c.arc(x, y, 3, 0, Math.PI * 2); c.fill();
+      c.fillStyle = 'rgba(255,204,0,.16)'; c.beginPath(); c.arc(x, y, 26, 0, Math.PI * 2); c.fill();
+      if (logoMoto.complete && logoMoto.naturalWidth) {
+        const t = Math.max(52, Math.min(84, W * .042));
+        c.drawImage(logoMoto, x - t / 2, y - t * .62, t, t);
+      } else { c.fillStyle = '#FFCC00'; c.beginPath(); c.arc(x, y, 8, 0, Math.PI * 2); c.fill(); }
     }
   }
 

@@ -29,7 +29,7 @@
 <div class="estrada" aria-hidden="true">
   <svg id="estradaSvg" preserveAspectRatio="none"><line id="estradaLinha" x1="0" y1="10" x2="100%" y2="10"/></svg>
   <div id="estradaPontos"></div>
-  <div id="moto"><i></i></div>
+  <div id="moto"><img src="assets/img/logo-entrega.webp" alt=""></div>
 </div>
 
 <!-- cortina em forma de rota (troca de capítulo) -->
@@ -163,20 +163,22 @@
     <p class="fonte">Tastefy One · 12/11 10h42 a 16/11 13h · 6 motoboys · aceite em mediana · 247 de 307 com código</p>
   </section>
 
-  <!-- 12 · antes e depois -->
+  <!-- 12 · antes e depois: o caderno virou histórico -->
   <section class="cena" data-cena="antes">
-    <p class="kicker centro">Antes e depois · quinta a domingo</p>
-    <div class="ad">
-      <div class="ad-lado"><small>Antes · 05 a 08/11</small><b class="num ad-antes">0%</b><span>no caderno</span></div>
-      <svg class="ad-rota" viewBox="0 0 400 80" aria-hidden="true"><path d="M10 60 C 120 60, 140 20, 200 20 S 290 60, 390 40"/><circle cx="390" cy="40" r="7"/></svg>
-      <div class="ad-lado depois"><small>Depois · 12 a 15/11</small><b class="num ad-depois"><span data-ate="88">88</span>%</b><span>no sistema · 311 de 352</span></div>
+    <p class="kicker centro">Antes e depois</p>
+    <div class="ah">
+      <figure class="ah-antes">
+        <small>Antes · o caderno</small>
+        <div class="ah-foto"><img src="assets/img/caderno.webp" alt="Página do caderno com os pedidos anotados à mão">
+          <svg class="ah-risco" viewBox="0 0 100 178" preserveAspectRatio="none" aria-hidden="true"><path d="M10 14 L 90 164"/><path d="M90 14 L 10 164"/></svg></div>
+      </figure>
+      <svg class="ah-seta" viewBox="0 0 220 80" aria-hidden="true"><path d="M8 56 C 70 56, 90 14, 140 18 S 196 44, 212 40"/><circle cx="212" cy="40" r="7"/></svg>
+      <figure class="ah-depois">
+        <small>Hoje · o histórico na Tastefy Entrega</small>
+        <div class="ah-tela"><img src="assets/img/historico.webp" alt="Tela Entregas e pagamento da Torre com as entregas de cada motoboy, hora de saída e de entrega, km e valor"></div>
+      </figure>
     </div>
-    <p class="ad-tit">Entregas com o motoboy registrado no sistema</p>
-    <div class="ad-linhas">
-      <div><span>Quanto pagar a cada motoboy</span><s>conta no caderno</s><b>2 toques</b></div>
-      <div><span>Onde está o motoboy</span><s>ninguém sabia</s><b>GPS no mapa</b></div>
-      <div><span>Quem levou cada pedido</span><s>caderno</s><b>registrado</b></div>
-    </div>
+    <p class="ah-frase">Quem levou, que horas saiu e entregou, quantos km e quanto pagar: tudo registrado, todo dia.</p>
   </section>
 
   <!-- 13 · custo -->
