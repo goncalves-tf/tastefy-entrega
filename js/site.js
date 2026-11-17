@@ -335,7 +335,7 @@
   const LADO = [0.08, 0.03, 0.94, 0.03, 0.95, 0.95, 0.95, 0.95, 0.035, 0, 0, 0.975, 0.04, 0.95, 0.05, 0.05, 0.5];
   const ALVO = { 1: 'risco', 9: 'fluxo', 10: 'mapa', 16: 'fecho' };
   const trilho = { cv: $('#rota'), ctx: null, W: 0, H: 0, pts: [], anc: [] };
-  const logoMoto = new Image(); logoMoto.src = 'assets/img/logo-entrega.webp'; logoMoto.onload = () => trilhoDesenha();
+  const logoMoto = new Image(); logoMoto.src = 'assets/img/logo-selo.png'; logoMoto.onload = () => trilhoDesenha();
   function ancoras() {
     const W = innerWidth, H = innerHeight;
     return LADO.map((x, i) => {
@@ -397,10 +397,12 @@
     const i = Math.round(rol), perto = Math.abs(rol - i) < .04 && (ALVO[i] || i === 0 || i === LADO.length - 1);
     if (!perto) {
       const x = sx(head), y = sy(head);
-      c.fillStyle = 'rgba(255,204,0,.16)'; c.beginPath(); c.arc(x, y, 26, 0, Math.PI * 2); c.fill();
       if (logoMoto.complete && logoMoto.naturalWidth) {
-        const t = Math.max(52, Math.min(84, W * .042));
-        c.drawImage(logoMoto, x - t / 2, y - t * .62, t, t);
+        const t = Math.max(56, Math.min(86, W * .045));
+        c.fillStyle = 'rgba(255,204,0,.18)'; c.beginPath(); c.arc(x, y, t * .66, 0, Math.PI * 2); c.fill();
+        c.save(); c.imageSmoothingEnabled = true; c.imageSmoothingQuality = 'high';
+        c.shadowColor = 'rgba(0,0,0,.55)'; c.shadowBlur = 14; c.shadowOffsetY = 4;
+        c.drawImage(logoMoto, x - t / 2, y - t / 2, t, t); c.restore();
       } else { c.fillStyle = '#FFCC00'; c.beginPath(); c.arc(x, y, 8, 0, Math.PI * 2); c.fill(); }
     }
   }
