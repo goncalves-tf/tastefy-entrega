@@ -277,3 +277,11 @@ body.cheia #tela{opacity:0}
 .logo-grande.pequeno img{height:clamp(84px,9vw,170px)}
 .logo-grande{gap:clamp(10px,1.2vw,22px)}
 @media (max-width:760px){.logo-grande{flex-direction:column}.logo-grande img{height:120px}.logo-grande.pequeno img{height:90px}}
+
+/* fecho: pino mais alto e texto acima da trilha de pontos, em qualquer altura de janela (17/11) */
+.pino-fecho{top:27%}
+.fecho-txt{top:37%;bottom:auto}
+.logo-grande.pequeno img{height:clamp(64px,min(7vw,12vh),132px)}
+.logo-grande.pequeno .lg-nome{font-size:clamp(30px,min(4.2vw,8vh),78px)}
+.fecho-txt h2{font-size:clamp(28px,min(4vw,7.5vh),72px)}
+@media (max-width:760px){.pino-fecho{top:24%}.fecho-txt{top:33%}}

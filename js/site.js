@@ -330,7 +330,7 @@
   // Âncora de cada parada: [x, y] em fração da tela no ponto de leitura. Nas paradas internas de uma cena a linha
   // repete a âncora (trecho curto e reto). Onde a cena tem um alvo (pino, rabisco, passo 1, mapa), a linha emenda nele.
   const LADO = [0.08, 0.03, 0.94, 0.03, 0.95, 0.95, 0.95, 0.95, 0.035, 0, 0, 0.975, 0.04, 0.95, 0.05, 0.05, 0.5];
-  const ALVO = { 1: 'risco', 9: 'fluxo', 10: 'mapa' };
+  const ALVO = { 1: 'risco', 9: 'fluxo', 10: 'mapa', 16: 'fecho' };
   const trilho = { cv: $('#rota'), ctx: null, W: 0, H: 0, pts: [], anc: [] };
   function ancoras() {
     const W = innerWidth, H = innerHeight;
@@ -341,6 +341,9 @@
       }
       if (alvo === 'fluxo') {
         const r = $('.fp:nth-child(1) b').getBoundingClientRect(); if (r.width) return [(r.left + r.width / 2) / W, (r.top + r.height / 2) / H];
+      }
+      if (alvo === 'fecho') {
+        const r = $('.pino-fecho').getBoundingClientRect(); if (r.width) return [(r.left + r.width / 2) / W, (r.top + r.height / 2) / H];
       }
       if (alvo === 'mapa') {
         const r = $('.rotas-mapa').getBoundingClientRect(); if (r.width) return [(r.left + 2) / W, .5];
