@@ -35,7 +35,7 @@
     return gsap.to(o, { v: ate, duration: dur, ease: 'power2.out', onUpdate: () => { el.textContent = Math.round(o.v) + sufixo; } });
   }
   function aparece(alvos, extra = {}) {
-    return gsap.fromTo(alvos, { autoAlpha: 0, y: 28, filter: 'blur(6px)' }, { autoAlpha: 1, y: 0, filter: 'blur(0px)', duration: .8, ease: SAI, stagger: .12, ...extra });
+    return gsap.fromTo(alvos, { autoAlpha: 0, y: 28 }, { autoAlpha: 1, y: 0, duration: .8, ease: SAI, stagger: .12, ...extra });
   }
 
   /* ---------- rotas reais (canvas) ---------- */
@@ -170,7 +170,7 @@
       tl.fromTo('.visita-foto', { clipPath: 'inset(0 100% 0 0 round 22px)', autoAlpha: 1 }, { clipPath: 'inset(0 0% 0 0 round 22px)', duration: 1.2, ease: 'power3.inOut' })
         .fromTo('.visita-foto img', { scale: 1.12 }, { scale: 1, duration: 1.6, ease: SAI }, 0)
         .add(aparece(['.visita-txt .kicker', '.visita-txt h2', '.visita-num > div']), .5);
-      $$('.visita-num b').forEach((b, i) => tl.add(conta(b, 7, 1), .9 + i * .2));
+      tl.add(conta($('.visita-num [data-conta]'), 7, 1), .9);
       return tl;
     },
     tres(b) {
@@ -233,7 +233,13 @@
     mais(b) {
       const tl = gsap.timeline();
       if (b === 0) tl.fromTo('.mais-1', { autoAlpha: 0 }, { autoAlpha: 1, duration: 1.2, ease: 'power1.inOut' });
-      if (b === 1) tl.to('.mais-1', { autoAlpha: 0, duration: .5 }).set('.mais-2', { autoAlpha: 1 }).add(aparece('.mais-2 .m', { stagger: .9, duration: .9 }));
+      if (b === 1) {
+        tl.to('.mais-1', { autoAlpha: 0, duration: .5 }).set('.mais-2', { autoAlpha: 1 })
+          .fromTo('.m-num', { autoAlpha: 0, scale: .7 }, { autoAlpha: 1, scale: 1, duration: .9, ease: 'expo.out' })
+          .add(conta($('.m-num b'), 88, 1.8), '<')
+          .add(aparece('.mais-2 .m', { stagger: .6, duration: .8 }), '-=.4')
+          .add(aparece('.mais-2 .mm'), '+=.2');
+      }
       return tl;
     },
     fecho() {
@@ -306,62 +312,74 @@
     }
     gsap.to(sai, { autoAlpha: 0, duration: .35, ease: 'power1.out', onComplete: () => { zera(de.c); } });
     gsap.set(entra, { autoAlpha: 1 });
-    tlAtual = montaAte(para.c, para.b, false);
+    tlAtual = montaAte(para.c, para.b, false); tlAtual.pause(); gsap.delayedCall(.35, () => tlAtual && tlAtual.play());
   }
 
   /* ---------- a rota que não quebra ----------
      Uma linha só, da capa ao fecho, desenhada pela rolagem. Cada parada ocupa 100vh da página; no ponto de leitura
      da parada (rolagem = i * altura da tela) a cabeça da linha fica no meio da altura, na lateral livre da cena. */
-  const LADO = [0.08, 0.03, 0.94, 0.03, 0.95, 0.05, 0.95, 0.05, 0.965, 0.03, 0.66, 0.975, 0.04, 0.95, 0.05, 0.95, 0.5];
-  const trilho = { cv: $('#rota'), ctx: null, W: 0, H: 0, pts: [] };
+  // Âncora de cada parada: [x, y] em fração da tela no ponto de leitura. Nas paradas internas de uma cena a linha
+  // repete a âncora (trecho curto e reto). Onde a cena tem um alvo (pino, rabisco, passo 1, mapa), a linha emenda nele.
+  const LADO = [0.08, 0.03, 0.94, 0.03, 0.95, 0.95, 0.95, 0.95, 0.035, 0, 0, 0.975, 0.04, 0.95, 0.05, 0.05, 0.5];
+  const ALVO = { 1: 'risco', 9: 'fluxo', 10: 'mapa' };
+  const trilho = { cv: $('#rota'), ctx: null, W: 0, H: 0, pts: [], anc: [] };
+  function ancoras() {
+    const W = innerWidth, H = innerHeight;
+    return LADO.map((x, i) => {
+      const alvo = ALVO[i];
+      if (alvo === 'risco') {
+        const r = $('.caderno-foto').getBoundingClientRect(); if (r.width) return [(r.left + r.width * .08) / W, (r.top + r.height * 20 / 178) / H];
+      }
+      if (alvo === 'fluxo') {
+        const r = $('.fp:nth-child(1) b').getBoundingClientRect(); if (r.width) return [(r.left + r.width / 2) / W, (r.top + r.height / 2) / H];
+      }
+      if (alvo === 'mapa') {
+        const r = $('.rotas-mapa').getBoundingClientRect(); if (r.width) return [(r.left + 2) / W, .5];
+      }
+      return [x || .05, .5];
+    });
+  }
   function trilhoMonta() {
     const dpr = Math.min(2, window.devicePixelRatio || 1);
     trilho.W = innerWidth; trilho.H = innerHeight;
     trilho.cv.width = Math.round(trilho.W * dpr); trilho.cv.height = Math.round(trilho.H * dpr);
     trilho.ctx = trilho.cv.getContext('2d'); trilho.ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    // mede as âncoras com as cenas no lugar (visibility não tira do layout)
+    const anc = ancoras(); trilho.anc = anc;
     const pts = [];
-    for (let i = 0; i < LADO.length - 1; i++) {
-      const a = [LADO[i], i + .5], b = [LADO[i + 1], i + 1.5];
+    for (let i = 0; i < anc.length - 1; i++) {
+      const A = [anc[i][0], i + anc[i][1]], B = [anc[i + 1][0], i + 1 + anc[i + 1][1]];
+      const d = (B[1] - A[1]) * .55;
       for (let k = 0; k < 60; k++) {
         const t = k / 60, u = 1 - t;
-        const x = u * u * u * a[0] + 3 * u * u * t * a[0] + 3 * u * t * t * b[0] + t * t * t * b[0];
-        const y = u * u * u * a[1] + 3 * u * u * t * (a[1] + .55) + 3 * u * t * t * (b[1] - .55) + t * t * t * b[1];
-        pts.push([x, y]);
+        pts.push([u * u * u * A[0] + 3 * u * u * t * A[0] + 3 * u * t * t * B[0] + t * t * t * B[0],
+                  u * u * u * A[1] + 3 * u * u * t * (A[1] + d) + 3 * u * t * t * (B[1] - d) + t * t * t * B[1]]);
       }
     }
-    pts.push([LADO[LADO.length - 1], LADO.length - .5]);
+    pts.push([anc[anc.length - 1][0], anc.length - 1 + anc[anc.length - 1][1]]);
     trilho.pts = pts;
   }
   function trilhoDesenha() {
-    const c = trilho.ctx; if (!c) return;
-    const W = trilho.W, H = trilho.H, rol = scrollY / H, cab = rol + .5;
+    const c = trilho.ctx; if (!c || !trilho.pts.length) return;
+    const W = trilho.W, H = trilho.H, rol = Math.max(0, scrollY / H);
     c.clearRect(0, 0, W, H);
     const sx = (p) => p[0] * W, sy = (p) => (p[1] - rol) * H;
-    const feito = new Path2D(), frente = new Path2D();
-    let ini = true, iniF = true, head = null;
-    for (let k = 0; k < trilho.pts.length; k++) {
-      const p = trilho.pts[k], y = sy(p);
-      if (p[1] <= cab) {
-        head = p;
-        if (y < -80) continue;
-        if (ini) { feito.moveTo(sx(p), y); ini = false; } else feito.lineTo(sx(p), y);
-      } else {
-        if (!head) break;
-        if (iniF) {
-          const q = trilho.pts[k - 1]; const f = (cab - q[1]) / (p[1] - q[1]);
-          head = [q[0] + (p[0] - q[0]) * f, cab];
-          if (ini) { feito.moveTo(sx(head), sy(head)); ini = false; } else feito.lineTo(sx(head), sy(head));
-          frente.moveTo(sx(head), sy(head)); iniF = false;
-        }
-        frente.lineTo(sx(p), y);
-        if (y > H + 80) break;
-      }
-    }
+    // a cabeça anda pela curva conforme a rolagem: na parada i ela está exatamente na âncora i
+    const pos = Math.min(trilho.pts.length - 1, rol * 60);
+    const k0 = Math.floor(pos), f = pos - k0, p0 = trilho.pts[k0], p1 = trilho.pts[Math.min(k0 + 1, trilho.pts.length - 1)];
+    const head = [p0[0] + (p1[0] - p0[0]) * f, p0[1] + (p1[1] - p0[1]) * f];
+    const feito = new Path2D(); let ini = true;
+    for (let k = 0; k <= k0; k++) { const p = trilho.pts[k], y = sy(p); if (y < -120 && k < k0) continue; if (ini) { feito.moveTo(sx(p), y); ini = false; } else feito.lineTo(sx(p), y); }
+    feito.lineTo(sx(head), sy(head));
+    const frente = new Path2D(); frente.moveTo(sx(head), sy(head));
+    for (let k = k0 + 1; k < Math.min(trilho.pts.length, k0 + 22); k++) frente.lineTo(sx(trilho.pts[k]), sy(trilho.pts[k]));
     c.lineJoin = 'round'; c.lineCap = 'round';
-    c.setLineDash([2, 12]); c.strokeStyle = 'rgba(255,255,255,.2)'; c.lineWidth = 3; c.stroke(frente); c.setLineDash([]);
+    c.setLineDash([2, 12]); c.strokeStyle = 'rgba(255,255,255,.1)'; c.lineWidth = 3; c.stroke(frente); c.setLineDash([]);
     c.strokeStyle = 'rgba(255,204,0,.16)'; c.lineWidth = 16; c.stroke(feito);
     c.strokeStyle = '#FFCC00'; c.lineWidth = 4; c.stroke(feito);
-    if (head) {
+    // a bolinha some quando a linha chega num alvo da cena (pino, rabisco, passo 1, mapa)
+    const i = Math.round(rol), perto = Math.abs(rol - i) < .04 && (ALVO[i] || i === 0 || i === LADO.length - 1);
+    if (!perto) {
       const x = sx(head), y = sy(head);
       c.fillStyle = 'rgba(255,204,0,.22)'; c.beginPath(); c.arc(x, y, 18, 0, Math.PI * 2); c.fill();
       c.fillStyle = '#FFCC00'; c.beginPath(); c.arc(x, y, 8, 0, Math.PI * 2); c.fill();

@@ -1,6 +1,6 @@
 :root{
   --fundo:#0B0B0C; --fundo-2:#141416; --linha:rgba(255,255,255,.10);
-  --branco:#F5F5F2; --apoio:#9A9AA2; --amarelo:#FFCC00; --roxo:#8B5CF6; --verde:#22C55E;
+  --branco:#F5F5F2; --apoio:#B8B8B2; --amarelo:#FFCC00; --roxo:#8B5CF6; --verde:#22C55E;
   --curva:cubic-bezier(.2,0,0,1);
   --gutter:clamp(16px,4vw,72px);
 }
@@ -242,3 +242,24 @@ body.cheia #tela{opacity:0}
 .nums{position:relative;border-top:2px dashed rgba(255,204,0,.35);padding-top:0}
 .n{position:relative;border-top:0}
 .n::before{content:"";position:absolute;top:-8px;left:0;width:14px;height:14px;border-radius:50%;background:var(--amarelo);box-shadow:0 0 0 6px rgba(255,204,0,.16),0 0 16px rgba(255,204,0,.6)}
+
+/* leitura na TV a 3 m (jurado, 17/11) */
+.sub{font-size:clamp(16px,1.3vw,24px)}
+.fonte{font-size:clamp(13px,.95vw,17px)}
+.custo-cards p{font-size:clamp(18px,1.6vw,30px);font-weight:700}
+.fpt p{font-size:clamp(13px,1.05vw,18px)}
+.fpt h4{font-size:clamp(15px,1.4vw,24px)}
+.tres-def{text-wrap:balance}
+.visita-num span{max-width:20ch}
+.nums{grid-template-columns:repeat(3,minmax(0,1fr))}
+.n b{font-size:clamp(56px,8vw,150px)}
+.n > span{font-size:clamp(15px,1.4vw,24px)}
+.ad-linhas div{font-size:clamp(15px,1.25vw,21px)}
+.m-num{margin:0;line-height:.9}
+.m-num b{font-size:clamp(120px,18vw,320px);font-weight:900;letter-spacing:-.05em}
+.mais-2 .m{font-size:clamp(26px,3.4vw,60px)}
+.mais-2{gap:clamp(6px,1.4vh,16px)}
+@media (max-width:760px){.nums{grid-template-columns:1fr;gap:14px}.n b{font-size:56px}}
+
+.visita-num b span{display:inline;font-size:inherit;color:inherit;margin:0;max-width:none}
+.visita-num > div > span{display:block}
