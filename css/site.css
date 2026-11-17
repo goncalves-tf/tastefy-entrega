@@ -270,3 +270,10 @@ body.cheia #tela{opacity:0}
 /* primeira transição travava 150 ms no rasterizar da foto girada com sombra */
 .caderno-foto{will-change:transform}
 
+
+/* logo do Tastefy Entrega (Taste na moto, gerada no ChatGPT em 17/11) */
+.hud-marca .marca-img{width:clamp(34px,2.6vw,48px);height:auto;margin:-6px 0}
+.logo-grande img{height:clamp(120px,15vw,270px);width:auto;filter:drop-shadow(0 18px 40px rgba(255,204,0,.18))}
+.logo-grande.pequeno img{height:clamp(84px,9vw,170px)}
+.logo-grande{gap:clamp(10px,1.2vw,22px)}
+@media (max-width:760px){.logo-grande{flex-direction:column}.logo-grande img{height:120px}.logo-grande.pequeno img{height:90px}}
