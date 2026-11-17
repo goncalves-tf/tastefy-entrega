@@ -263,3 +263,10 @@ body.cheia #tela{opacity:0}
 
 .visita-num b span{display:inline;font-size:inherit;color:inherit;margin:0;max-width:none}
 .visita-num > div > span{display:block}
+
+/* toque no celular: a rolagem sempre para numa parada */
+@media (pointer:coarse){html{scroll-snap-type:y mandatory}html.livre{scroll-snap-type:none}}
+
+/* primeira transição travava 150 ms no rasterizar da foto girada com sombra */
+.caderno-foto{will-change:transform}
+

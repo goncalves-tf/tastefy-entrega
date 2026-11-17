@@ -208,7 +208,7 @@
     },
     numeros() {
       const tl = gsap.timeline(), n = $$('.n');
-      tl.add(aparece('[data-cena="numeros"] .kicker'));
+      tl.fromTo('.nums', { autoAlpha: 0 }, { autoAlpha: 1, duration: .4 }, 0).add(aparece('[data-cena="numeros"] .kicker'), 0);
       n.forEach((el, i) => { tl.add(aparece(el, { duration: .7 }), .3 + i * .45); const s = $('[data-ate]', el); tl.add(conta(s, +s.dataset.ate, 1.4), .35 + i * .45); });
       tl.add(aparece('.fonte'), '-=.6');
       return tl;
@@ -262,15 +262,18 @@
   }
 
   /* ---------- motor de paradas ---------- */
-  let atual = -1, tlAtual = null, trocando = false;
+  let atual = -1, tlAtual = null, trocando = false, capDesejado = '', atraso = null;
   const pontos = $('#estradaPontos');
   STOPS.forEach((s, i) => { const d = document.createElement('i'); d.style.left = (i / (STOPS.length - 1) * 100) + '%'; pontos.appendChild(d); });
   function estrada(i, inst) {
     const pct = i / (STOPS.length - 1) * 100;
     gsap.to('#moto', { left: pct + '%', duration: inst ? 0 : .9, ease: 'power2.inOut' });
     $$('#estradaPontos i').forEach((d, k) => d.classList.toggle('feito', k <= i));
-    const cap = STOPS[i].cap; const hc = $('#hudCap');
-    if (hc.textContent !== cap) gsap.to(hc, { autoAlpha: 0, duration: inst ? 0 : .2, onComplete: () => { hc.textContent = cap; gsap.to(hc, { autoAlpha: 1, duration: inst ? 0 : .3 }); } });
+    const hc = $('#hudCap'); capDesejado = STOPS[i].cap;
+    if (hc.textContent === capDesejado) return;
+    gsap.killTweensOf(hc);
+    if (inst) { hc.textContent = capDesejado; gsap.set(hc, { autoAlpha: 1 }); return; }
+    gsap.to(hc, { autoAlpha: 0, duration: .18, onComplete: () => { hc.textContent = capDesejado; gsap.to(hc, { autoAlpha: 1, duration: .3 }); } });
   }
   function montaAte(nome, b, inst) {
     zera(nome);
@@ -295,6 +298,10 @@
       return;
     }
     const sai = de ? cena(de.c) : null, entra = cena(para.c);
+    if (atraso) { atraso.kill(); atraso = null; }
+    if (de && de.c === 'video') videoPara();
+    if (de && de.c === 'rotas') rotPara();
+    gsap.killTweensOf(entra);
     const troca = () => {
       if (sai) { gsap.killTweensOf(sai); gsap.set(sai, { autoAlpha: 0 }); zera(de.c); }
       gsap.set(entra, { autoAlpha: 1 });
@@ -310,9 +317,11 @@
         .to('#cortinaPath', { drawSVG: '100% 100%', duration: .6, ease: 'power2.out' }, '+=.06');
       return;
     }
-    gsap.to(sai, { autoAlpha: 0, duration: .35, ease: 'power1.out', onComplete: () => { zera(de.c); } });
+    const nomeSai = de.c;
+    gsap.to(sai, { autoAlpha: 0, duration: .3, ease: 'power1.out', onComplete: () => { if (STOPS[atual].c !== nomeSai) zera(nomeSai); } });
     gsap.set(entra, { autoAlpha: 1 });
-    tlAtual = montaAte(para.c, para.b, false); tlAtual.pause(); gsap.delayedCall(.35, () => tlAtual && tlAtual.play());
+    const tl = montaAte(para.c, para.b, false); tlAtual = tl; tl.pause();
+    atraso = gsap.delayedCall(.18, () => { atraso = null; if (tlAtual === tl) tl.play(); });
   }
 
   /* ---------- a rota que não quebra ----------
@@ -424,7 +433,17 @@
     else if (k === 'End') { e.preventDefault(); rolaPara(STOPS.length - 1); }
     else if (k === 'f' || k === 'F') telaCheia();
   });
-  addEventListener('wheel', () => { if (rolando) { rolando.kill(); rolando = null; document.documentElement.classList.remove('livre'); } }, { passive: true });
+  let rAcum = 0, rUlt = 0, rTrava = 0, rPausa = false;
+  addEventListener('wheel', (e) => {
+    if (e.ctrlKey) return;               // zoom do navegador continua funcionando
+    e.preventDefault();
+    const agora = performance.now(), folga = agora - rUlt; rUlt = agora;
+    if (rPausa) { if (folga < 200) return; rPausa = false; }   // espera o fim da inércia do touchpad
+    if (agora < rTrava) return;
+    if (folga > 200) rAcum = 0;
+    rAcum += e.deltaMode === 1 ? e.deltaY * 40 : e.deltaY;
+    if (Math.abs(rAcum) >= 40) { proximo(rAcum > 0 ? 1 : -1); rAcum = 0; rTrava = agora + 900; rPausa = true; }
+  }, { passive: false });
   addEventListener('click', (e) => {
     if (e.target.closest('#tela')) return;
     proximo(e.clientX < innerWidth * .25 ? -1 : 1);
