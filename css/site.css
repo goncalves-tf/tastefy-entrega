@@ -313,3 +313,22 @@ body.cheia #tela{opacity:0}
 /* selo da logo em tamanho pequeno: branco com anel amarelo, legível no fundo preto (17/11) */
 .hud-marca .marca-img{width:clamp(36px,2.6vw,46px);height:auto;margin:-6px 0;filter:drop-shadow(0 2px 6px rgba(0,0,0,.5))}
 #moto img{width:clamp(38px,2.8vw,50px);transform:translate(-50%,-50%);filter:drop-shadow(0 3px 8px rgba(0,0,0,.6)) drop-shadow(0 0 10px rgba(255,204,0,.35))}
+
+/* "mais uma coisa": não é teste, é todo dia (entregas reais por dia, banco do One, 17/11) */
+.mais-2{gap:clamp(8px,1.8vh,20px)}
+.m-tit{font-size:clamp(34px,4.6vw,86px);font-weight:900;letter-spacing:-.02em;line-height:1.05}
+.m-tit em{font-style:normal;color:var(--amarelo)}
+.barras-dia{display:flex;align-items:flex-end;justify-content:center;gap:clamp(14px,2.6vw,48px);height:min(34vh,330px);margin:clamp(6px,1.5vh,18px) 0}
+.bd{display:grid;grid-template-rows:auto 1fr auto;justify-items:center;align-items:end;height:100%;width:clamp(56px,7vw,120px);gap:8px}
+.bd b{font-size:clamp(22px,2.6vw,46px);font-weight:900;color:var(--amarelo);line-height:1}
+.bd i{display:block;width:100%;height:calc(var(--h) * 100%);border-radius:12px 12px 4px 4px;background:linear-gradient(180deg,#FFD84D,#FFCC00 40%,#E0A800);box-shadow:0 0 30px rgba(255,204,0,.25)}
+.bd span{font-size:clamp(12px,1vw,17px);color:var(--apoio);text-align:center;line-height:1.25;text-transform:uppercase;letter-spacing:.06em}
+.m-ia{font-size:clamp(14px,1.25vw,21px);color:var(--branco);font-weight:600;opacity:.85}
+@media (max-width:760px){.barras-dia{height:26vh;gap:10px}.bd{width:48px}.bd b{font-size:18px}}
+
+/* barras: altura no CSS (o reset de estilo do motor apagava o style inline) */
+.barras-dia{--bmax:min(26vh,250px);height:auto;align-items:flex-end}
+.bd{display:flex;flex-direction:column;justify-content:flex-end;align-items:center;height:auto;gap:8px}
+.bd i{flex:none}
+.bd:nth-child(1) i{height:calc(var(--bmax) * 0.406)}.bd:nth-child(2) i{height:calc(var(--bmax) * 0.614)}.bd:nth-child(3) i{height:calc(var(--bmax) * 0.891)}.bd:nth-child(4) i{height:calc(var(--bmax) * 1.000)}.bd:nth-child(5) i{height:calc(var(--bmax) * 0.703)}
+@media (max-width:760px){.barras-dia{--bmax:20vh}}

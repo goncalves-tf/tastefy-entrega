@@ -238,10 +238,15 @@
       if (b === 0) tl.fromTo('.mais-1', { autoAlpha: 0 }, { autoAlpha: 1, duration: 1.2, ease: 'power1.inOut' });
       if (b === 1) {
         tl.to('.mais-1', { autoAlpha: 0, duration: .5 }).set('.mais-2', { autoAlpha: 1 })
-          .fromTo('.m-num', { autoAlpha: 0, scale: .7 }, { autoAlpha: 1, scale: 1, duration: .9, ease: 'expo.out' })
-          .add(conta($('.m-num b'), 88, 1.8), '<')
-          .add(aparece('.mais-2 .m', { stagger: .6, duration: .8 }), '-=.4')
-          .add(aparece('.mais-2 .mm'), '+=.2');
+          .add(aparece('.m-tit', { duration: .9 }));
+        $$('.bd').forEach((el, i) => {
+          const t = 1.1 + i * .35;
+          tl.fromTo(el.querySelector('i'), { scaleY: 0 }, { scaleY: 1, duration: .8, ease: 'power3.out', transformOrigin: '50% 100%' }, t)
+            .fromTo(el.querySelector('b'), { autoAlpha: 0, y: 12 }, { autoAlpha: 1, y: 0, duration: .5, ease: SAI }, t + .2)
+            .add(conta(el.querySelector('b'), +el.querySelector('b').dataset.ate, .9), t + .2)
+            .fromTo(el.querySelector('span'), { autoAlpha: 0 }, { autoAlpha: 1, duration: .4 }, t);
+        });
+        tl.add(aparece('.mais-2 .mm'), '+=.1').add(aparece('.m-ia'), '+=.6');
       }
       return tl;
     },
