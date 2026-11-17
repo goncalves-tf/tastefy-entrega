@@ -332,3 +332,6 @@ body.cheia #tela{opacity:0}
 .bd i{flex:none}
 .bd:nth-child(1) i{height:calc(var(--bmax) * 0.406)}.bd:nth-child(2) i{height:calc(var(--bmax) * 0.614)}.bd:nth-child(3) i{height:calc(var(--bmax) * 0.891)}.bd:nth-child(4) i{height:calc(var(--bmax) * 1.000)}.bd:nth-child(5) i{height:calc(var(--bmax) * 0.703)}
 @media (max-width:760px){.barras-dia{--bmax:20vh}}
+
+/* números: só 22 s e 6 motoboys; o total de entregas fica nas barras do final (17/11) */
+.nums{grid-template-columns:repeat(2,minmax(0,1fr));max-width:1200px;margin:0 auto;width:100%}
